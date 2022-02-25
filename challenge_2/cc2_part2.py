@@ -14,3 +14,6 @@ for x in list_a:
 list_diff = [x for x in list_a if x not in list_b]
 list_diff.extend(y for y in list_b if y not in list_a)
 print(list_diff)
+
+
+# AD - Nice nice nice!

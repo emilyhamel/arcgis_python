@@ -8,3 +8,6 @@
 value_list = [1, 2, 3, 6, 8, 12, 20, 32, 46, 85]
 new_list = [integer for integer in value_list if integer > 5]
 print(new_list)
+
+
+# AD - Challenge is for less than 5, not greater than 5.

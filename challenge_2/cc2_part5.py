@@ -16,3 +16,4 @@ def scrabble_score(word):
 print("that word is worth" + " " + str(scrabble_score(word)) + " " + "points!")
 
 
+#AD Great work!

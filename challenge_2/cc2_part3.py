@@ -9,3 +9,5 @@ list_string = string.split()
 unique_words = set(list_string)
 for words in unique_words:
     print(words, list_string.count(words))
+
+# AD: Very nice solution to this challenge.
