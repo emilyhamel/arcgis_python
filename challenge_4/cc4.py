@@ -12,7 +12,7 @@ import arcpy
 
 
 # set workspace as cc4_data folder, present in this repository as a .zip file
-data_folder = r"C:\Users\emjha\Documents\python\challenge_4\cc4_data"
+data_folder = r"C:\Data\Students_2022\Hamel\challenge_4\AD-Run\cc4_data"
 
 
 # set local variables
