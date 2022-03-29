@@ -7,10 +7,10 @@ import os
 # the "challenge_3" folder contains the entire directory tree
 dir_tree = r"C:\challenge_3"
 os.mkdir(dir_tree)
-os.mkdir(r"C:\challenge_3\draft_code")
-os.mkdir(r"C:\challenge_3\draft_code\pending")
-os.mkdir(r"C:\challenge_3\draft_code\complete")
-os.mkdir(r"C:\challenge_3\includes")
+os.mkdir(os.path.join(dir_tree, "draft_code"))
+os.mkdir(os.path.join(dir_tree, "draft_code\pending"))
+os.mkdir(os.path.join(dir_tree, "draft_code\complete"))
+os.mkdir(os.path.join(dir_tree, "includes"))
 os.mkdir(r"C:\challenge_3\layouts")
 os.mkdir(r"C:\challenge_3\layouts\default")
 os.mkdir(r"C:\challenge_3\layouts\post")
