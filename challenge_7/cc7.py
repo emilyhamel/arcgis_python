@@ -61,24 +61,22 @@ for individual in species_file_list:
     x_coords = "longitude"
     y_coords = "latitude"
     z_coords = ""
-    out_Layer = "species_point"
-    saved_Layer = individual + ".shp"
+    out_Layer = individual + "_point"
+    saved_PointLayer = individual.replace(".", "_") + ".shp"
 
 # set the spatial reference
     spRef = arcpy.SpatialReference(4326)  # 4326 == WGS 1984
 # define the XY layer file
     lyr = arcpy.MakeXYEventLayer_management(in_Table, x_coords, y_coords, out_Layer, spRef, z_coords)
 # save to a layer file
-    arcpy.CopyFeatures_management(lyr, os.path.join(input_directory, "temporary_files", saved_Layer))
-    if arcpy.Exists(saved_Layer):
-        print(individual + " shapefile created successfully")
+    arcpy.CopyFeatures_management(lyr, os.path.join(input_directory, "temporary_files", saved_PointLayer))
+    if arcpy.Exists(saved_PointLayer):
+        print(saved_PointLayer + " shapefile created successfully")
 
 # extract the Extent of the generated shapefile
 # i.e. XMin, XMax, YMin, YMax
-    desc = arcpy.Describe(os.path.join(input_directory, "temporary_files", saved_Layer))
-    print(desc)
-    print(os.path.join(input_directory, "temporary_files", saved_Layer))
-    XMin = desc.extent.XMin  # ERROR...method extent does not exist
+    desc = arcpy.Describe(os.path.join(input_directory, "temporary_files", saved_PointLayer))
+    XMin = desc.extent.XMin
     XMax = desc.extent.XMax
     YMin = desc.extent.YMin
     YMax = desc.extent.YMax
@@ -87,7 +85,7 @@ for individual in species_file_list:
 # generate a fishnet with a cell size of 0.25 degrees
     arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
     # name of output fishnet
-    outFeatureClass = individual + "_Fishnet.shp"
+    outFishnet = individual.replace(".", "_") + "_Fishnet.shp"
 
 # set the origin of the fishnet
     originCoordinate = str(XMin) + " " + str(YMin)  # bottom left of the point data
@@ -101,17 +99,17 @@ for individual in species_file_list:
     templateExtent = "#"
     geometryType = "POLYGON"  # create a polygon
 
-    arcpy.CreateFishnet_management(outFeatureClass, originCoordinate, yAxisCoordinate,
+    arcpy.CreateFishnet_management(outFishnet, originCoordinate, yAxisCoordinate,
                                    cellSizeWidth, cellSizeHeight, numRows, numColumns,
                                    oppositeCorner, labels, templateExtent, geometryType)
-    if arcpy.Exists(individual + "_Fishnet.shp"):
-        print(individual + " fishnet file created successfully")
+    if arcpy.Exists(outFishnet):
+        print(outFishnet + " fishnet file created successfully")
 
 
 # undertake a Spatial Join to join the fishnet to the observed point locations in the .shp files
-    target_features = individual + "_Fishnet.shp"
-    join_features = individual + ".shp"
-    out_feature_class = os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")
+    target_features = outFishnet
+    join_features = saved_PointLayer
+    out_HeatMap = os.path.join(input_directory, "output_files", individual.replace(".", "_") + "_HeatMap.shp")
     join_operation = "JOIN_ONE_TO_ONE"
     join_type = "KEEP_ALL"
     field_mapping = ""
@@ -119,14 +117,15 @@ for individual in species_file_list:
     search_radius = ""
     distance_field_name = ""
 
-    arcpy.SpatialJoin_analysis(target_features, join_features, out_feature_class,
+    arcpy.SpatialJoin_analysis(target_features, join_features, out_HeatMap,
                                join_operation, join_type, field_mapping, match_option,
                                search_radius, distance_field_name)
 
 
 # check that the heatmap is created
-    if arcpy.Exists(os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")):
-        print(individual + " heatmap file created successfully")
+    if arcpy.Exists(os.path.join(input_directory, "output_files", out_HeatMap)):
+        print(individual.replace(".", "_") + "_HeatMap.shp" + " heatmap file created successfully")
+
 # delete the intermediate files (i.e. species shapefile and fishnet)
-        print("deleting the temporary folder")
-        arcpy.Delete_management(os.path.join(input_directory, "temporary_files"))
+print("deleting the temporary folder")
+arcpy.Delete_management(os.path.join(input_directory, "temporary_files"))
