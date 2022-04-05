@@ -11,7 +11,7 @@ arcpy.env.overwriteOutput = True
 
 # define the file location and specific data file
 # the input_directory should be altered per individual user
-input_directory = r"C:\Users\emjha\Documents\python\challenge_7"
+input_directory = r"C:\Data\Students_2022\Hamel\challenge_7"
 data_file = "albatross_data.csv"
 
 # create new file locations for results data
@@ -62,7 +62,7 @@ for individual in species_file_list:
     y_coords = "latitude"
     z_coords = ""
     out_Layer = "species_point"
-    saved_Layer = individual + ".shp"
+    saved_Layer = individual.replace(".", "_") + ".shp"
 
 # set the spatial reference
     spRef = arcpy.SpatialReference(4326)  # 4326 == WGS 1984
@@ -82,51 +82,52 @@ for individual in species_file_list:
     XMax = desc.extent.XMax
     YMin = desc.extent.YMin
     YMax = desc.extent.YMax
+    print(YMax)
 
-
-# generate a fishnet with a cell size of 0.25 degrees
-    arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
-    # name of output fishnet
-    outFeatureClass = individual + "_Fishnet.shp"
-
-# set the origin of the fishnet
-    originCoordinate = str(XMin) + " " + str(YMin)  # bottom left of the point data
-    yAxisCoordinate = str(XMin) + " " + str(YMin + 1)  # sets the orientation on the y-axis, north-orientation
-    cellSizeWidth = "0.25"
-    cellSizeHeight = "0.25"
-    numRows = ""  # leave blank, cellSize previously set
-    numColumns = ""  # leave blank, cellSize previously set
-    oppositeCorner = str(XMax) + " " + str(YMax)  # i.e. max x and max y coordinate
-    labels = "NO_LABELS"
-    templateExtent = "#"
-    geometryType = "POLYGON"  # create a polygon
-
-    arcpy.CreateFishnet_management(outFeatureClass, originCoordinate, yAxisCoordinate,
-                                   cellSizeWidth, cellSizeHeight, numRows, numColumns,
-                                   oppositeCorner, labels, templateExtent, geometryType)
-    if arcpy.Exists(individual + "_Fishnet.shp"):
-        print(individual + " fishnet file created successfully")
-
-
-# undertake a Spatial Join to join the fishnet to the observed point locations in the .shp files
-    target_features = individual + "_Fishnet.shp"
-    join_features = individual + ".shp"
-    out_feature_class = os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")
-    join_operation = "JOIN_ONE_TO_ONE"
-    join_type = "KEEP_ALL"
-    field_mapping = ""
-    match_option = "INTERSECT"
-    search_radius = ""
-    distance_field_name = ""
-
-    arcpy.SpatialJoin_analysis(target_features, join_features, out_feature_class,
-                               join_operation, join_type, field_mapping, match_option,
-                               search_radius, distance_field_name)
-
-
-# check that the heatmap is created
-    if arcpy.Exists(os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")):
-        print(individual + " heatmap file created successfully")
-# delete the intermediate files (i.e. species shapefile and fishnet)
-        print("deleting the temporary folder")
-        arcpy.Delete_management(os.path.join(input_directory, "temporary_files"))
+#
+# # generate a fishnet with a cell size of 0.25 degrees
+#     arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
+#     # name of output fishnet
+#     outFeatureClass = individual + "_Fishnet.shp"
+#
+# # set the origin of the fishnet
+#     originCoordinate = str(XMin) + " " + str(YMin)  # bottom left of the point data
+#     yAxisCoordinate = str(XMin) + " " + str(YMin + 1)  # sets the orientation on the y-axis, north-orientation
+#     cellSizeWidth = "0.25"
+#     cellSizeHeight = "0.25"
+#     numRows = ""  # leave blank, cellSize previously set
+#     numColumns = ""  # leave blank, cellSize previously set
+#     oppositeCorner = str(XMax) + " " + str(YMax)  # i.e. max x and max y coordinate
+#     labels = "NO_LABELS"
+#     templateExtent = "#"
+#     geometryType = "POLYGON"  # create a polygon
+#
+#     arcpy.CreateFishnet_management(outFeatureClass, originCoordinate, yAxisCoordinate,
+#                                    cellSizeWidth, cellSizeHeight, numRows, numColumns,
+#                                    oppositeCorner, labels, templateExtent, geometryType)
+#     if arcpy.Exists(individual + "_Fishnet.shp"):
+#         print(individual + " fishnet file created successfully")
+#
+#
+# # undertake a Spatial Join to join the fishnet to the observed point locations in the .shp files
+#     target_features = individual + "_Fishnet.shp"
+#     join_features = individual + ".shp"
+#     out_feature_class = os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")
+#     join_operation = "JOIN_ONE_TO_ONE"
+#     join_type = "KEEP_ALL"
+#     field_mapping = ""
+#     match_option = "INTERSECT"
+#     search_radius = ""
+#     distance_field_name = ""
+#
+#     arcpy.SpatialJoin_analysis(target_features, join_features, out_feature_class,
+#                                join_operation, join_type, field_mapping, match_option,
+#                                search_radius, distance_field_name)
+#
+#
+# # check that the heatmap is created
+#     if arcpy.Exists(os.path.join(input_directory, "output_files", individual + "_HeatMap.shp")):
+#         print(individual + " heatmap file created successfully")
+# # delete the intermediate files (i.e. species shapefile and fishnet)
+#         print("deleting the temporary folder")
+#         arcpy.Delete_management(os.path.join(input_directory, "temporary_files"))
