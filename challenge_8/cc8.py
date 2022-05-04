@@ -29,11 +29,11 @@ def select_tool(input, selection):
             print("Input data is not a ShapeFile")
     else:
         print("Dataset not found")
-    for data_file in input:
-        input_features = input
-        output_feature_class = os.path.join(data_folder, "county_" + selection + ".shp")
-        where_clause = '"COUNTY" = \'' + selection + "'"
-        arcpy.Select_analysis(input_features, output_feature_class, where_clause)
+
+    input_features = input
+    output_feature_class = os.path.join(data_folder, "county_" + selection + ".shp")
+    where_clause = '"COUNTY" = \'' + selection + "'"
+    arcpy.Select_analysis(input_features, output_feature_class, where_clause)
     print(selection + " county selected")
     print("county_" + selection + ".shp created")
 
